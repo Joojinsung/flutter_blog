@@ -41,6 +41,7 @@ class _SignupState extends State<Signup> {
       if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => CreatePostPage()),
+
         );
       }
     } catch (e) {
