@@ -1,5 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/screens/post_list_screen.dart';
+import 'package:flutter_blog/screens/signup.dart';
+import 'package:flutter_blog/screens/widgets/login_logout_button.dart';
 import 'package:http/http.dart' as http;
 
 class CreatePostPage extends StatefulWidget {
@@ -12,6 +14,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
 
+  bool isLoggedIn = true;
+
+  void _handleLogout() {
+    setState(() {
+      isLoggedIn = false;
+    });
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Signup()));
+  }
+
   Future<void> _submitPost() async {
     final String title = _titleController.text;
     final String content = _contentController.text;
@@ -21,7 +33,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
 
     final response = await http.post(
-      Uri.parse('http://192.168.219.43:8080/post/store'),
+      Uri.parse('http://192.168.0.4:8080/post/store'),
       headers: {'X-Requested-With': 'Flutter'},
       body: {
         'title': title,
@@ -33,6 +45,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Post created successfully')),
       );
+
+      await Future.delayed(Duration(milliseconds: 500));
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PostListScreen(),
+        ),
+      );
+
       _titleController.clear();
       _contentController.clear();
     } else {
@@ -47,6 +68,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Post'),
+        actions: [
+          LoginLogoutButton(
+            isLogin: isLoggedIn,
+            onPressed: _handleLogout,
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

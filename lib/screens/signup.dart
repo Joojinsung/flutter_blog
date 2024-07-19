@@ -14,6 +14,7 @@ class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool isLogin = false;
 
   @override
   void dispose() {
@@ -31,17 +32,21 @@ class _SignupState extends State<Signup> {
     }
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.219.43:8080/user/store'),
+        Uri.parse('http://192.168.0.4:8080/user/store'),
         headers: {'X-Requested-With': 'Flutter'},
         body: {'email': email, 'password': password},
       );
-      // 응답값 출력
+
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
+        setState(() {
+          isLogin = true;
+        });
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => CreatePostPage()),
-
         );
       }
     } catch (e) {
